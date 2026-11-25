@@ -11,10 +11,16 @@ jobs:
         with:
           distribution: temurin
           java-version: '25'
+      - name: Descomprimir el código si está en zip
+        run: |
+          for z in *.zip; do
+            [ -f "$z" ] && unzip -o -q "$z"
+          done
+          true
       - name: Compilar
         run: |
           POM=$(find . -name pom.xml -not -path './.git/*' | head -1)
-          if [ -z "$POM" ]; then echo "No hay pom.xml en el repositorio: sube los archivos descomprimidos"; exit 1; fi
+          if [ -z "$POM" ]; then echo "No hay pom.xml en el repositorio"; exit 1; fi
           cd "$(dirname "$POM")"
           mvn -B package
       - uses: actions/upload-artifact@v4
